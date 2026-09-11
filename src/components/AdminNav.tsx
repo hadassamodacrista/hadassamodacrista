@@ -23,7 +23,7 @@ export function AdminNav() {
     <header className="border-b border-blush-200 bg-white">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <Logo size={36} />
+          <Logo size={48} />
           <span className="font-serif text-base text-blush-900">Painel Hadassa</span>
         </div>
         <nav className="flex items-center gap-4 text-sm">
