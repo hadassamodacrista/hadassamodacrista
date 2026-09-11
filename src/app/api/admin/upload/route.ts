@@ -22,9 +22,21 @@ export async function POST(req: NextRequest) {
 
   const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
   const fileName = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}.${ext}`;
+
+  // Em produção (Vercel), o disco local não é permanente: as fotos enviadas pelo
+  // admin vão para o Vercel Blob. Em desenvolvimento local, sem essa chave configurada,
+  // continuam sendo salvas na pasta public/ para não exigir setup extra.
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    const { put } = await import("@vercel/blob");
+    const blob = await put(`products/uploads/${fileName}`, file, {
+      access: "public",
+      addRandomSuffix: false
+    });
+    return NextResponse.json({ url: blob.url });
+  }
+
   const uploadDir = path.join(process.cwd(), "public", "products", "uploads");
   await mkdir(uploadDir, { recursive: true });
-
   const bytes = Buffer.from(await file.arrayBuffer());
   await writeFile(path.join(uploadDir, fileName), bytes);
 
