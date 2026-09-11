@@ -18,6 +18,7 @@ model Product {
   featured    Boolean  @default(false)
   sizes       String?
   colors      String?
+  stock       Int?
   images      ProductImage[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

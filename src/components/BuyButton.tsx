@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { whatsappDigits } from "@/lib/whatsapp";
 
+const MAX_QUANTITY = 20;
+
 export function BuyButton({
   productId,
   whatsapp,
@@ -15,8 +17,14 @@ export function BuyButton({
   sizes?: string[];
 }) {
   const [selectedSize, setSelectedSize] = useState<string | null>(sizes.length === 1 ? sizes[0] : null);
+  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function changeQuantity(delta: number) {
+    setQuantity((q) => Math.min(MAX_QUANTITY, Math.max(1, q + delta)));
+    setError(null);
+  }
 
   async function handleBuy() {
     if (sizes.length > 0 && !selectedSize) {
@@ -29,7 +37,7 @@ export function BuyButton({
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productId, size: selectedSize })
+        body: JSON.stringify({ productId, size: selectedSize, quantity })
       });
       const data = await res.json();
       if (!res.ok) {
@@ -47,7 +55,7 @@ export function BuyButton({
   const productLabel = selectedSize ? `${productName}, tamanho ${selectedSize}` : productName;
   const whatsappHref = whatsapp
     ? `https://wa.me/${whatsappDigits(whatsapp)}?text=${encodeURIComponent(
-        `Olá! Tenho interesse no ${productLabel}.`
+        `Olá! Tenho interesse no ${productLabel}${quantity > 1 ? ` (${quantity} unidades)` : ""}.`
       )}`
     : null;
 
@@ -77,6 +85,29 @@ export function BuyButton({
           </div>
         </div>
       )}
+
+      <div>
+        <p className="text-xs font-medium uppercase tracking-wide text-blush-600">Quantidade</p>
+        <div className="mt-2 inline-flex items-center rounded-full border border-blush-300">
+          <button
+            type="button"
+            onClick={() => changeQuantity(-1)}
+            className="flex h-9 w-9 items-center justify-center text-blush-700 hover:text-blush-900"
+            aria-label="Diminuir quantidade"
+          >
+            −
+          </button>
+          <span className="w-8 text-center text-sm font-medium text-blush-900">{quantity}</span>
+          <button
+            type="button"
+            onClick={() => changeQuantity(1)}
+            className="flex h-9 w-9 items-center justify-center text-blush-700 hover:text-blush-900"
+            aria-label="Aumentar quantidade"
+          >
+            +
+          </button>
+        </div>
+      </div>
 
       <button
         onClick={handleBuy}

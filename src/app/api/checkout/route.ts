@@ -3,10 +3,12 @@ import { db } from "@/lib/db";
 import { createCheckoutPreference } from "@/lib/mercadopago";
 
 export async function POST(req: NextRequest) {
-  const { productId, size } = await req.json();
+  const { productId, size, quantity } = await req.json();
   if (!productId) {
     return NextResponse.json({ error: "Produto não informado" }, { status: 400 });
   }
+
+  const qty = Number.isFinite(Number(quantity)) && Number(quantity) > 0 ? Math.floor(Number(quantity)) : 1;
 
   const product = await db.product.findUnique({
     where: { id: productId },
@@ -18,6 +20,15 @@ export async function POST(req: NextRequest) {
   }
   if (!product.price) {
     return NextResponse.json({ error: "Este produto ainda não tem preço definido" }, { status: 400 });
+  }
+  if (product.stock !== null && qty > product.stock) {
+    const msg =
+      product.stock > 0
+        ? product.stock === 1
+          ? "Só temos 1 peça disponível desse produto no momento."
+          : `Só temos ${product.stock} peças disponíveis desse produto no momento.`
+        : "Esse produto está esgotado no momento.";
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
 
   const settings = await db.storeSettings.findUnique({ where: { id: 1 } });
@@ -36,6 +47,7 @@ export async function POST(req: NextRequest) {
       productName: size ? `${product.name} - Tamanho ${size}` : product.name,
       productId: product.id,
       price: product.price,
+      quantity: qty,
       imageUrl: product.images[0]?.url
         ? new URL(product.images[0].url, siteUrl).toString()
         : undefined,

@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { name, description, category, price, active, featured, sizes, colors, images } = body;
+  const { name, description, category, price, active, featured, sizes, colors, stock, images } = body;
 
   if (!name || !category) {
     return NextResponse.json({ error: "Nome e categoria são obrigatórios" }, { status: 400 });
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       featured: !!featured,
       sizes: sizes || null,
       colors: colors || null,
+      stock: stock === "" || stock === null || stock === undefined ? null : Number(stock),
       images: {
         create: (images || []).map((img: { url: string; color?: string }, i: number) => ({
           url: img.url,

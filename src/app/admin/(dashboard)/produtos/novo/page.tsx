@@ -12,6 +12,7 @@ export default function NovoProdutoPage() {
           price: "",
           sizes: "",
           colors: "",
+          stock: "",
           active: true,
           featured: false,
           images: []

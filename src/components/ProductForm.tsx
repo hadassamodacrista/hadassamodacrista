@@ -15,6 +15,7 @@ export type ProductFormValues = {
   price: string;
   sizes: string;
   colors: string;
+  stock: string;
   active: boolean;
   featured: boolean;
   images: ProductImageValue[];
@@ -79,6 +80,7 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
       price: values.price === "" ? null : Number(values.price),
       sizes: values.sizes,
       colors: values.colors,
+      stock: values.stock === "" ? null : Number(values.stock),
       active: values.active,
       featured: values.featured,
       images: values.images
@@ -146,6 +148,23 @@ export function ProductForm({ initial }: { initial: ProductFormValues }) {
           placeholder="Deixe em branco para 'Consulte o preço'"
           className="mt-1 w-full rounded-lg border border-blush-300 px-3 py-2 text-sm outline-none focus:border-blush-500"
         />
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium text-blush-700">Estoque disponível (opcional)</label>
+        <input
+          type="number"
+          step="1"
+          min="0"
+          value={values.stock}
+          onChange={(e) => set("stock", e.target.value)}
+          placeholder="Deixe em branco para não controlar estoque"
+          className="mt-1 w-full rounded-lg border border-blush-300 px-3 py-2 text-sm outline-none focus:border-blush-500"
+        />
+        <p className="mt-1 text-xs text-blush-500">
+          Esse número nunca aparece pro cliente. Se ele tentar comprar mais do que você tem, o site
+          avisa só na hora de finalizar a compra.
+        </p>
       </div>
 
       <div>

@@ -15,7 +15,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await req.json();
-  const { name, description, category, price, active, featured, sizes, colors, images } = body;
+  const { name, description, category, price, active, featured, sizes, colors, stock, images } = body;
 
   const existing = await db.product.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ error: "Produto não encontrado" }, { status: 404 });
@@ -41,6 +41,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       featured: featured !== undefined ? !!featured : existing.featured,
       sizes: sizes ?? existing.sizes,
       colors: colors ?? existing.colors,
+      stock: stock === undefined ? existing.stock : stock === "" || stock === null ? null : Number(stock),
       ...(images
         ? {
             images: {

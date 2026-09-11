@@ -5,6 +5,7 @@ export async function createCheckoutPreference(params: {
   productName: string;
   productId: string;
   price: number;
+  quantity?: number;
   imageUrl?: string;
   siteUrl: string;
 }) {
@@ -17,7 +18,7 @@ export async function createCheckoutPreference(params: {
         {
           id: params.productId,
           title: params.productName,
-          quantity: 1,
+          quantity: params.quantity ?? 1,
           currency_id: "BRL",
           unit_price: params.price,
           picture_url: params.imageUrl

@@ -9,6 +9,7 @@ type Product = {
   name: string;
   category: string;
   price: number | null;
+  stock: number | null;
   active: boolean;
   featured: boolean;
   images: { url: string }[];
@@ -75,6 +76,7 @@ export default function AdminProductsPage() {
                 <th className="px-4 py-3">Nome</th>
                 <th className="px-4 py-3">Categoria</th>
                 <th className="px-4 py-3">Preço</th>
+                <th className="px-4 py-3">Estoque</th>
                 <th className="px-4 py-3">Visível</th>
                 <th className="px-4 py-3 text-right">Ações</th>
               </tr>
@@ -95,6 +97,15 @@ export default function AdminProductsPage() {
                     {p.price
                       ? p.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
                       : <span className="text-amber-600">sem preço</span>}
+                  </td>
+                  <td className="px-4 py-2 text-blush-600">
+                    {p.stock === null ? (
+                      <span className="text-blush-400">sem controle</span>
+                    ) : p.stock === 0 ? (
+                      <span className="font-medium text-red-600">esgotado</span>
+                    ) : (
+                      p.stock
+                    )}
                   </td>
                   <td className="px-4 py-2">
                     <button

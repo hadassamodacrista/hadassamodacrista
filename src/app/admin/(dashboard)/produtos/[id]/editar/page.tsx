@@ -24,6 +24,7 @@ export default function EditarProdutoPage() {
           price: p.price?.toString() ?? "",
           sizes: p.sizes ?? "",
           colors: p.colors ?? "",
+          stock: p.stock?.toString() ?? "",
           active: p.active,
           featured: p.featured,
           images: p.images.map((i: { url: string; color: string | null }) => ({
