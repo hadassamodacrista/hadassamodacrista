@@ -24,7 +24,7 @@ export function Header({ storeName }: { storeName: string }) {
     <header className="sticky top-0 z-40 border-b border-blush-200 bg-blush-50/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
         <Link href="/" className="flex items-center gap-3" aria-label={storeName}>
-          <Logo size={64} variant="header" />
+          <Logo size={64} />
         </Link>
 
         <form onSubmit={handleSearch} className="flex w-full max-w-xs items-center">
