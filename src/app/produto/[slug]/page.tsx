@@ -36,19 +36,6 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </p>
         )}
 
-        {sizes.length > 0 && (
-          <div className="mt-5">
-            <p className="text-xs font-medium uppercase tracking-wide text-blush-600">Tamanhos disponíveis</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {sizes.map((s) => (
-                <span key={s} className="rounded-full border border-blush-300 px-3 py-1 text-xs text-blush-800">
-                  {s}
-                </span>
-              ))}
-            </div>
-          </div>
-        )}
-
         {!hasImageColors && manualColors.length > 0 && (
           <div className="mt-3">
             <p className="text-xs font-medium uppercase tracking-wide text-blush-600">Cores</p>
@@ -63,7 +50,12 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         )}
 
         <div className="mt-6">
-          <BuyButton productId={product.id} whatsapp={settings?.whatsapp ?? null} productName={product.name} />
+          <BuyButton
+            productId={product.id}
+            whatsapp={settings?.whatsapp ?? null}
+            productName={product.name}
+            sizes={sizes}
+          />
         </div>
       </div>
     </div>

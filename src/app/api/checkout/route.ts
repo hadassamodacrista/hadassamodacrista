@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 import { createCheckoutPreference } from "@/lib/mercadopago";
 
 export async function POST(req: NextRequest) {
-  const { productId } = await req.json();
+  const { productId, size } = await req.json();
   if (!productId) {
     return NextResponse.json({ error: "Produto não informado" }, { status: 400 });
   }
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   try {
     const preference = await createCheckoutPreference({
       accessToken: settings.mpAccessToken,
-      productName: product.name,
+      productName: size ? `${product.name} - Tamanho ${size}` : product.name,
       productId: product.id,
       price: product.price,
       imageUrl: product.images[0]?.url
