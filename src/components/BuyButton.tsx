@@ -1,0 +1,82 @@
+"use client";
+
+import { useState } from "react";
+import { whatsappDigits } from "@/lib/whatsapp";
+
+export function BuyButton({
+  productId,
+  whatsapp,
+  productName
+}: {
+  productId: string;
+  whatsapp: string | null;
+  productName: string;
+}) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleBuy() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Não foi possível iniciar o pagamento.");
+        return;
+      }
+      window.location.href = data.initPoint;
+    } catch {
+      setError("Erro de conexão. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const whatsappHref = whatsapp
+    ? `https://wa.me/${whatsappDigits(whatsapp)}?text=${encodeURIComponent(
+        `Olá! Tenho interesse no ${productName}.`
+      )}`
+    : null;
+
+  return (
+    <div className="space-y-3">
+      <button
+        onClick={handleBuy}
+        disabled={loading}
+        className="w-full rounded-full bg-blush-700 px-6 py-3 text-sm font-medium text-white transition hover:bg-blush-800 disabled:opacity-60"
+      >
+        {loading ? "Processando..." : "Comprar agora"}
+      </button>
+
+      {error && (
+        <div className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          {error}
+          {whatsappHref && (
+            <>
+              {" "}
+              <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="underline">
+                Falar no WhatsApp
+              </a>
+            </>
+          )}
+        </div>
+      )}
+
+      {whatsappHref && !error && (
+        <a
+          href={whatsappHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full rounded-full border border-blush-300 px-6 py-3 text-center text-sm font-medium text-blush-700 transition hover:bg-blush-50"
+        >
+          Tirar dúvidas no WhatsApp
+        </a>
+      )}
+    </div>
+  );
+}
